@@ -1,6 +1,5 @@
 package com.darlisonhenrique.caf.damanha.api.controller;
 
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,61 +22,63 @@ import com.darlisonhenrique.caf.damanha.api.disassembler.ColaboradorInputDisasse
 import com.darlisonhenrique.caf.damanha.api.input.ColaboradorInput;
 import com.darlisonhenrique.caf.damanha.api.model.ColaboradorFullModel;
 import com.darlisonhenrique.caf.damanha.api.model.ColaboradorModel;
+import com.darlisonhenrique.caf.damanha.domain.dto.FiltroColaborador;
 import com.darlisonhenrique.caf.damanha.domain.model.Colaborador;
 import com.darlisonhenrique.caf.damanha.domain.service.ColaboradorService;
 
 @RestController
 @RequestMapping("/colaboradores")
 public class ColaboradorController {
-	
-	@Autowired	
+
+	@Autowired
 	private ColaboradorService colaboradorService;
-	
+
 	@Autowired
 	private ColaboradorModelAssembler colaboradorModelAssembler;
-	
+
 	@Autowired
 	private ColaboradorFullModelAssembler colaboradorFullModelAssembler;
-	
+
 	@Autowired
 	private ColaboradorInputDisassembler colaboradorInputDisassembler;
-	
+
 	@GetMapping
-	public Page<ColaboradorModel> buscaTodos (Pageable pageable){
-		Page<Colaborador> page = colaboradorService.buscarTodos(pageable);
-		
+	public Page<ColaboradorModel> buscarTodos(Pageable pageable, FiltroColaborador filtroColaborador) {
+		Page<Colaborador> page = colaboradorService.buscarTodos(pageable, filtroColaborador);
+
 		return page.map(colaborador -> colaboradorModelAssembler.toModel(colaborador));
 	}
-	
+
 	@GetMapping("/{id}")
 	public ColaboradorFullModel buscarPorId(@PathVariable Long id) {
 		Colaborador colaborador = colaboradorService.buscarPorId(id);
-		
+
 		return colaboradorFullModelAssembler.toModelAssembler(colaborador);
 	}
-	
+
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public ColaboradorFullModel inserir(@Valid @RequestBody ColaboradorInput colaboradorInput) {
-		Colaborador colaborador = colaboradorService.inserir(colaboradorInputDisassembler.toDomainModel(colaboradorInput));
-		
+		Colaborador colaborador = colaboradorService
+				.inserir(colaboradorInputDisassembler.toDomainModel(colaboradorInput));
+
 		return colaboradorFullModelAssembler.toModelAssembler(colaborador);
 	}
-	
+
 	@PutMapping("/{id}")
-	public ColaboradorFullModel atualizar(@Valid @RequestBody ColaboradorInput colaboradorInput, @PathVariable Long id) { 
+	public ColaboradorFullModel atualizar(@Valid @RequestBody ColaboradorInput colaboradorInput,
+			@PathVariable Long id) {
 		Colaborador colaborador = colaboradorService.buscarPorId(id);
 		colaboradorInputDisassembler.copiarParaDomainModel(colaboradorInput, colaborador);
 		colaborador = colaboradorService.atualizar(colaborador);
-		
+
 		return colaboradorFullModelAssembler.toModel(colaborador);
-		
+
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public void deletarPorId(@PathVariable Long id) {
 		colaboradorService.deletarPorId(id);
 	}
-	
 
 }
