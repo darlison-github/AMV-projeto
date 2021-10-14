@@ -56,7 +56,7 @@ public class ResourceHandler extends ResponseEntityExceptionHandler {
 				
 				String userMessage = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
 				
-				mensagemErrorPersonalizada.adicionarError(field, mensagem);
+				mensagemErrorPersonalizada.adicionarError(field, userMessage);
 			}
 			
 			return handleExceptionInternal(ex, mensagemErrorPersonalizada, headers, status, request);

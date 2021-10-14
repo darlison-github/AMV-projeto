@@ -66,7 +66,7 @@ public class ColaboradorCafeDaManhaController {
 		return cafeDaManhaModelAssembler.toModel(cafeManha);
 	}
 	
-	@DeleteMapping
+	@DeleteMapping("/{cafeManhaId}")
 	public void deletar(@PathVariable Long colaboradorId, @PathVariable Long cafeManhaId) {
 		colaboradorCafeDaManhaService.deletar(colaboradorId, cafeManhaId);
 	}
